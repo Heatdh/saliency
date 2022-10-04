@@ -4,3 +4,5 @@ __pycache__/
 PNAS/PNASNet-5_Large.pth
 *.sh
 *.log
+augmented/
+.ipynb_checkpoints/

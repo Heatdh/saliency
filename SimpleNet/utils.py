@@ -34,11 +34,12 @@ def visualize_model(model, loader, device, args):
         os.makedirs(args.results_dir, exist_ok=True)
         
         for (img, img_id, sz) in tqdm(loader):
-            img = img.to(device)
-            
+            img = img.to(device)  
+            a=sz[0].numpy() 
+            b=sz[1].numpy()     
             pred_map = model(img)
             pred_map = pred_map.cpu().squeeze(0).numpy()
-            pred_map = cv2.resize(pred_map, (sz[0], sz[1]))
+            pred_map = cv2.resize(pred_map,(a[0], b[0])) # tensor is not compatible for my version of cv2
             
             pred_map = torch.FloatTensor(blur(pred_map))
             img_save(pred_map, join(args.results_dir, img_id[0]), normalize=True)
