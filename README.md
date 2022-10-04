@@ -1,3 +1,6 @@
+# Data Augmentation for Saliency prediction/ Improve current NN
+This Branch aims to levrage the performace of SimpleNet and eventually other Saliency predictions Networks through Data augmentation and other Techniques.
+
 # Tidying Deep Saliency Prediction Architectures
 
 This repository contains Pytorch Implementation of SimpleNet and MDNSal. Appearing in the proceedings of the 21st International Conference on Intelligent Robots and Systems (IROS).
