@@ -6,3 +6,7 @@ PNAS/PNASNet-5_Large.pth
 *.log
 augmented/
 .ipynb_checkpoints/
+API_keys.json
+SimpleNet/wandb/
+wandb/
+dataset/

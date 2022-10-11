@@ -4,6 +4,7 @@ from torch.utils.data import DataLoader
 import numpy as np
 import torch
 import os, cv2
+import scipy.io
 
 class SaliconDataset(DataLoader):
     def __init__(self, img_dir, gt_dir, fix_dir, img_ids, exten='.png'):
@@ -22,10 +23,11 @@ class SaliconDataset(DataLoader):
     def __getitem__(self, idx):
         img_id = self.img_ids[idx]
         img_path = os.path.join(self.img_dir, img_id + self.exten)
-        gt_path = os.path.join(self.gt_dir, img_id + self.exten)
-        fix_path = os.path.join(self.fix_dir, img_id + self.exten)
+        gt_path = os.path.join(self.gt_dir, img_id + '.png')
+        fix_path = os.path.join(self.fix_dir, img_id + '.png')
         
-        img = Image.open(img_path).convert('RGB')
+        print(img_path)
+        img = Image.open(open(img_path, 'rb')).convert('RGB')
 
         gt = np.array(Image.open(gt_path).convert('L'))
         gt = gt.astype('float')
@@ -33,7 +35,8 @@ class SaliconDataset(DataLoader):
 
         fixations = np.array(Image.open(fix_path).convert('L'))
         fixations = fixations.astype('float')
-        
+        #fixations = np.array(scipy.io.loadmat(fix_path)["gaze"])
+        #fixations = fixations.astype('float')
         img = self.img_transform(img)
         if np.max(gt) > 1.0:
             gt = gt / 255.0
