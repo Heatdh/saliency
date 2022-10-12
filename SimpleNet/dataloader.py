@@ -26,7 +26,7 @@ class SaliconDataset(DataLoader):
         gt_path = os.path.join(self.gt_dir, img_id + '.png')
         fix_path = os.path.join(self.fix_dir, img_id + '.png')
         
-        print(img_path)
+        #print(img_path)
         img = Image.open(open(img_path, 'rb')).convert('RGB')
 
         gt = np.array(Image.open(gt_path).convert('L'))

@@ -22,14 +22,18 @@ from loss import *
 import cv2
 from utils import blur, AverageMeter
 import wandb
+import json
 
 def config_Wb(args):
     """ Configure wb
     """
 
-    wandb.init(id= args.enc_model, project="Saliency", entity="heatdh")#, config=args,reinit=True)
+    #wandb.init(id= args.enc_model, project="Saliency", entity="heatdh")#, config=args,reinit=True)
 
-
+def dump_args(args):
+    with open(os.path.join('cfgs/default_cfg.json'), 'w') as f:
+        json.dump(args.__dict__, f, indent=2)
+    
 
 
 def loss_func(pred_map, gt, fixations, args):
@@ -53,7 +57,7 @@ def train(model, optimizer, loader, epoch, device, args):
     
     total_loss = 0.0
     cur_loss = 0.0
-    wandb.watch(model)
+    #wandb.watch(model)
     for idx, (img, gt, fixations) in enumerate(loader):
         img = img.to(device)
         gt = gt.to(device)
@@ -72,12 +76,12 @@ def train(model, optimizer, loader, epoch, device, args):
             print('[{:2d}, {:5d}] avg_loss : {:.5f}, time:{:3f} minutes'.format(epoch, idx, cur_loss/args.log_interval, (time.time()-tic)/60))
             cur_loss = 0.0
             sys.stdout.flush()
-        wandb.log({"loss":loss})
-        wandb.log({"avg_loss":total_loss/(idx+1)})
+        #wandb.log({"loss":loss})
+        #wandb.log({"avg_loss":total_loss/(idx+1)})
     
     print('[{:2d}, train] avg_loss : {:.5f}'.format(epoch, total_loss/len(loader)))
     sys.stdout.flush()
-    wandb.log({"avg_train_loss":total_loss/(idx+1)})
+    #wandb.log({"avg_train_loss":total_loss/(idx+1)})
     return total_loss/len(loader)
 
 def validate(model, loader, epoch, device, args):
@@ -104,10 +108,10 @@ def validate(model, loader, epoch, device, args):
         kldiv_loss.update(kldiv(blur_map, gt))    
         nss_loss.update(nss(blur_map, gt))    
         sim_loss.update(similarity(blur_map, gt))    
-
+        #wandb.log({"avg_val_loss":cc_loss.avg})
     print('[{:2d},   val] CC : {:.5f}, KLDIV : {:.5f}, NSS : {:.5f}, SIM : {:.5f}  time:{:3f} minutes'.format(epoch, cc_loss.avg, kldiv_loss.avg, nss_loss.avg, sim_loss.avg, (time.time()-tic)/60))
     sys.stdout.flush()
-    wandb.log({"avg_val_loss":cc_loss.avg})
+    
     return cc_loss.avg
 
 
@@ -148,6 +152,9 @@ if __name__ == '__main__':
 
 
     args = parser.parse_args()
+    # dump default args # just for the first time only to not set the json manually
+    # I might put all and wrap it in a class to be access all parts
+    #dump_args(args)
     config_Wb(args)
     train_img_dir = args.dataset_dir + "images/train/"
     train_gt_dir = args.dataset_dir + "maps/train/"
