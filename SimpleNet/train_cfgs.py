@@ -177,7 +177,7 @@ class train_simpleNet():
             
             cc_loss.update(cc(blur_map, gt))    
             kldiv_loss.update(kldiv(blur_map, gt))    
-            nss_loss.update(nss(blur_map, gt))    
+            nss_loss.update(nss(blur_map, gt)) # fixations
             sim_loss.update(similarity(blur_map, gt))    
             wandb.log({"avg_val_loss":cc_loss.avg})
         print('[{:2d},   val] CC : {:.5f}, KLDIV : {:.5f}, NSS : {:.5f}, SIM : {:.5f}  time:{:3f} minutes'.format(epoch, cc_loss.avg, kldiv_loss.avg, nss_loss.avg, sim_loss.avg, (time.time()-tic)/60))
