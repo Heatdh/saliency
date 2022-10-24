@@ -57,7 +57,7 @@ class train_simpleNet():
         train_img_ids = [nm.split(".")[0] for nm in os.listdir(train_img_dir)]
         val_img_ids = [nm.split(".")[0] for nm in os.listdir(val_img_dir)]
         train_dataset = SaliconDataset(train_img_dir, train_gt_dir, train_fix_dir, train_img_ids,".jpg")
-        val_dataset = SaliconDataset(val_img_dir, val_gt_dir, val_fix_dir, val_img_ids)
+        val_dataset = SaliconDataset(val_img_dir, val_gt_dir, val_fix_dir, val_img_ids,".jpg")
         self.train_loader = torch.utils.data.DataLoader(train_dataset, batch_size=self.args["batch_size"], shuffle=True, num_workers=self.args["no_workers"])
         self.val_loader = torch.utils.data.DataLoader(val_dataset, batch_size=1, shuffle=False, num_workers=self.args["no_workers"])
 
@@ -136,7 +136,7 @@ class train_simpleNet():
                 cur_loss = 0.0
                 sys.stdout.flush()
             wandb.log({"loss":loss})
-            wandb.log({"avg_loss":total_loss/(idx+1)})
+        wandb.log({"avg_loss":total_loss/len(loader)})
         
         print('[{:2d}, train] avg_loss : {:.5f}'.format(epoch, total_loss/len(loader)))
         sys.stdout.flush()
@@ -177,9 +177,12 @@ class train_simpleNet():
             
             cc_loss.update(cc(blur_map, gt))    
             kldiv_loss.update(kldiv(blur_map, gt))    
-            nss_loss.update(nss(blur_map, gt)) # fixations
+            nss_loss.update(nss(fixations, gt)) # was previously blur map
             sim_loss.update(similarity(blur_map, gt))    
-            wandb.log({"avg_val_loss":cc_loss.avg})
+        wandb.log({"cc_loss":cc_loss.avg})
+        wandb.log({"kldiv_loss":kldiv_loss.avg})
+        wandb.log({"nss_loss":nss_loss.avg})
+        wandb.log({"sim_loss":sim_loss.avg})
         print('[{:2d},   val] CC : {:.5f}, KLDIV : {:.5f}, NSS : {:.5f}, SIM : {:.5f}  time:{:3f} minutes'.format(epoch, cc_loss.avg, kldiv_loss.avg, nss_loss.avg, sim_loss.avg, (time.time()-tic)/60))
         sys.stdout.flush()
         

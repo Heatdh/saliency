@@ -10,3 +10,5 @@ API_keys.json
 SimpleNet/wandb/
 wandb/
 dataset/
+__MACOSX/
+.DS_Store

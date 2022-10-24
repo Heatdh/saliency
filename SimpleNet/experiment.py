@@ -30,7 +30,6 @@ def get_config(json_file,json_dir):
 
 
 
-
 if __name__ == '__main__':
     json_dir = Path(__file__).parent.parent/"cfgs"
     device = torch.device("cuda:0" if torch.cuda.is_available() else "cpu")
